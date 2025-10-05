@@ -1,4 +1,5 @@
 import { generateAiResponse } from '@/services/ia/generator';
+import { router } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { Alert } from 'react-native';
 import { z } from 'zod';
@@ -34,6 +35,8 @@ export const useGymWorkoutForm = () => {
     heathProblems: '',
   });
 
+  const [aiLoading, setAiLoading] = useState(false);
+
   const handleChange = useCallback((field: keyof typeof form, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   }, []);
@@ -50,7 +53,8 @@ export const useGymWorkoutForm = () => {
     `;
   }, []);
 
-  const handleSubmit = useCallback(() => {
+  const handleSubmit = useCallback(async () => {
+    setAiLoading(true);
     const parsed: IFormData = {
       ...form,
       age: Number(form.age),
@@ -70,7 +74,12 @@ export const useGymWorkoutForm = () => {
 
     const formattedDataForIa = formatFormDataToAI(result.data);
 
-    generateAiResponse(formattedDataForIa);
+    const workout = await generateAiResponse(formattedDataForIa);
+    setAiLoading(false);
+    router.push({
+      pathname: '/workouts',
+      params: { workout },
+    });
   }, [form, formatFormDataToAI]);
 
   return {
@@ -79,5 +88,6 @@ export const useGymWorkoutForm = () => {
     handleChange,
     handleSubmit,
     form,
+    aiLoading,
   };
 };

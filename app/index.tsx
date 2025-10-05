@@ -2,12 +2,12 @@ import CustomButton from '@/components/button';
 import Input from '@/components/input';
 import { ScrollView, StatusBar, Text, View } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useGymWorkoutForm } from '../hooks/useGymWorkoutForm';
 import { styles } from './styles';
-import { useGymWorkoutForm } from './useGymWorkoutForm';
 
 export default function Index() {
   const insets = useSafeAreaInsets();
-  const { form, handleChange, handleSubmit, setForm } = useGymWorkoutForm();
+  const { form, handleChange, handleSubmit, aiLoading } = useGymWorkoutForm();
 
   return (
     <View style={{ flex: 1, backgroundColor: '#90a959' }}>
@@ -69,7 +69,11 @@ export default function Index() {
             />
           </View>
           <View style={styles.buttonContainer}>
-            <CustomButton title="Gerar treino personalizado" onPress={() => handleSubmit()} />
+            <CustomButton
+              title="Gerar treino personalizado"
+              onPress={() => handleSubmit()}
+              loading={aiLoading}
+            />
           </View>
         </ScrollView>
       </SafeAreaView>
